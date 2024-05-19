@@ -2,6 +2,7 @@ import telebot
 import requests
 import json
 import time
+import sys
 from colorama import init, Fore, Style
 
 def main():
@@ -53,12 +54,19 @@ Banco: {banco}
 
     def start_bot():
         print(Fore.CYAN + Style.BRIGHT + "El bot está funcionando correctamente. Esperando comandos...")
+        max_retries = 5
+        attempts = 0
+
         while True:
             try:
                 bot.polling(none_stop=True)
             except Exception as e:
+                attempts += 1
                 print(Fore.RED + Style.BRIGHT + f"Se perdió la conexión: {e}")
-                print(Fore.YELLOW + Style.BRIGHT + "Reintentando en 15 segundos...")
+                if attempts >= max_retries:
+                    print(Fore.RED + Style.BRIGHT + "Número máximo de intentos de reconexión alcanzado. Por favor, reinicia el script manualmente.")
+                    sys.exit()
+                print(Fore.YELLOW + Style.BRIGHT + f"Reintentando en 15 segundos... (Intento {attempts} de {max_retries})")
                 time.sleep(15)
 
     start_bot()
