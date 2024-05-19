@@ -1,6 +1,7 @@
 import telebot
 import requests
 import json
+import time
 from colorama import init, Fore, Style
 
 def main():
@@ -50,8 +51,17 @@ Banco: {banco}
         except json.JSONDecodeError:
             bot.send_message(message.chat.id, "Error al procesar la respuesta de la API.")
 
-    print(Fore.CYAN + Style.BRIGHT + "El bot está funcionando correctamente. Esperando comandos...")
-    bot.polling()
+    def start_bot():
+        print(Fore.CYAN + Style.BRIGHT + "El bot está funcionando correctamente. Esperando comandos...")
+        while True:
+            try:
+                bot.polling(none_stop=True)
+            except Exception as e:
+                print(Fore.RED + Style.BRIGHT + f"Se perdió la conexión: {e}")
+                print(Fore.YELLOW + Style.BRIGHT + "Reintentando en 15 segundos...")
+                time.sleep(15)
+
+    start_bot()
 
 if __name__ == "__main__":
     main()
